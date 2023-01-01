@@ -1,0 +1,63 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      project:
+        default: 'all'
+        required: false
+        type: string
+  push:
+    branch: main
+
+jobs:
+#  update:
+#    runs-on: ubuntu-latest
+#    if: github.event_name == 'push'
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: update server infrastructure
+#        uses: burnett01/rsync-deployments@5.2.1
+#        with:
+#          switches: -avzr --delete
+#          path: deploy
+#          remote_path: ~/dev
+#          remote_host: ${{ secrets.HOST }}
+#          remote_user: ${{ secrets.USER }}
+#          remote_key: ${{ secrets.SSH_KEY }}
+#  deploy-signle:
+#    runs-on: ubuntu-latest
+#    if: github.event_name == 'push' || inputs.project != 'all'
+#    steps:
+#      - name: restart containers
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USER }}
+#          key: ${{ secrets.SSH_KEY }}
+#          script: |
+#            cd dev/deploy
+#            sudo docker-compose stop
+#            sudo docker-compose rm -f ${{ inputs.project }}:latest
+#            sudo docker pull ghcr.io/cranio-worldwide/${{ inputs.project }}:latest
+#            sudo docker-compose up -d
+  deploy-all:
+    runs-on: ubuntu-latest
+#    needs: update
+#    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || inputs.project == 'all'
+    steps:
+      - name: restart containers
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd dev/deploy
+            sudo docker-compose stop
+            sudo docker-compose rm -f backend
+            sudo docker-compose rm -f frontend
+            sudo docker pull ghcr.io/cranio-worldwide/backend:latest
+            sudo docker pull ghcr.io/cranio-worldwide/frontend:latest
+            sudo docker-compose up -d
