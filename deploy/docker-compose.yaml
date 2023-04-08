@@ -5,8 +5,8 @@ services:
     image: postgres:13.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-#    env_file:
-#      - .env
+    env_file:
+      - .env
 
   backend:
     image: ghcr.io/cranio-worldwide/backend:latest
@@ -17,8 +17,8 @@ services:
       - media_value:/app/media/
     depends_on:
       - db
-#    env_file:
-#      - .env
+    env_file:
+      - .env
 
   frontend:
     image: ghcr.io/cranio-worldwide/frontend:latest
