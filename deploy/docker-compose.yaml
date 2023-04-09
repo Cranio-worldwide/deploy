@@ -10,7 +10,7 @@ services:
 
   backend:
     image: ghcr.io/cranio-worldwide/backend:latest
-    command: python manage.py migrate && gunicorn cranio.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn cranio.wsgi:application --bind 0.0.0.0:8000
     restart: always
     volumes:
       - static_value:/app/static/
